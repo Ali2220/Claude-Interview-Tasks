@@ -1,4 +1,5 @@
 const mongoose = require("mongoose")
+const bcrypt = require('bcryptjs')
 
 const userSchema = mongoose.Schema({
     name: {
@@ -24,3 +25,20 @@ const userSchema = mongoose.Schema({
 },
     { timestamps: true }
 )
+
+// password ko hash krna save krne se pehle.
+// this -> wo user jis ka data save ho rha hai.
+userSchema.pre('save', async function(next) {
+    if (!this.isModified('password')) return
+
+    this.password = await bcrypt.hash(this.password, 10)
+})
+
+
+// Password ko Compare karna (Login ke waqt)
+// Hum Mongoose schema mein apna ek custom function (method) bana rahe hain jiska naam humne comparePassword rakha hai.
+userSchema.methods.comparePassword = async function (candidatePassword) {
+    return await bcrypt.compare(candidatePassword, this.password)
+}
+
+module.exports = mongoose.model('User', userSchema)
