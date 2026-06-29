@@ -17,9 +17,7 @@ const createNote = async (req, res, next) => {
 
         res.status(201).json({ message: 'Note create successfully', note })
     } catch (error) {
-        res.status(500).json({
-            error: `Create Note Error: ${err.message}`
-        })
+        next(error)
     }
 }
 
@@ -29,10 +27,8 @@ const getNotes = async (req, res, next) => {
         const notes = await Note.find({ owner: req.user._id }).sort({ createdAt: -1 })
 
         return res.status(200).json({ notes })
-    } catch (err) {
-        res.status(500).json({
-            error: `Get Notes Error: ${err.message}`
-        })
+    } catch (error) {
+        next(error)
     }
 }
 
@@ -52,10 +48,8 @@ const getNoteById = async (req, res, next) => {
         }
 
         return res.status(200).json({ note })
-    } catch (err) {
-        res.status(500).json({
-            error: `Get note by id error: ${err}`
-        })
+    } catch (error) {
+        next(error)
     }
 }
 
@@ -88,10 +82,8 @@ const updateNote = async (req, res, next) => {
         await note.save()
 
         res.status(200).json({ message: "Note updated successfully", note })
-    } catch (err) {
-        res.status(500).json({
-            error: `Update note error ${err}`
-        })
+    } catch (error) {
+        next(error)
     }
 }
 
@@ -119,10 +111,8 @@ const deleteNote = async (req, res, next) => {
             message: 'Note deleted successfully'
         })
 
-    } catch (err) {
-        res.status(500).json({
-            error: `Delete note error ${err}`
-        })
+    } catch (error) {
+        next(error)
     }
 }
 
