@@ -68,7 +68,7 @@ exports.redirectUrl = async (req, res) => {
             })
         }
 
-        url.clicks += 1
+        url.clickHistory.push({ clickedAt: new Date() })
         await url.save()
 
         // 301 = permanent redirect (browser cache karta hai)

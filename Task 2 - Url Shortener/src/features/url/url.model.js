@@ -1,5 +1,9 @@
 const mongoose = require('mongoose');
 
+const clickSchema = new mongoose.Schema({
+    clickedAt: { type: Date, default: Date.now }
+}, { _id: false })
+
 const urlSchema = new mongoose.Schema({
 
     originalUrl: {
@@ -22,10 +26,7 @@ const urlSchema = new mongoose.Schema({
     },
 
     // Clicks: Analytics ke liye counter, jo har click par +1 barhega
-    clicks: {
-        type: Number,
-        default: 0
-    },
+    clickHistory: [clickSchema],
 
     // Expiry Date: Woh time jab yeh link expire hona chahiye
     // Default 'null' hai, yaani jab tak date nahi denge link hamesha zinda rahega
@@ -36,6 +37,12 @@ const urlSchema = new mongoose.Schema({
 }, {
     timestamps: true
 });
+
+urlSchema.virtual("totalClicks").get(function () {
+    return this.clickHistory.length
+})
+
+urlSchema.set('toJSON', { virtuals: true })
 
 // MongoDB TTL (Time-To-Live) Index:
 // Jaise hi clock (current time) 'expiresAt' ki date ko cross karegi, 
