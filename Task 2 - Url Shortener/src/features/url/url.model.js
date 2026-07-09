@@ -38,10 +38,14 @@ const urlSchema = new mongoose.Schema({
     timestamps: true
 });
 
+// Virtual Field: 'totalClicks' naam ki ek fake/on-the-fly field banayi.
+// Isse har baar DB se count mangwane ki zaroorat nahi parti, yeh 'clickHistory' array ki length ginn kar de deta hai.
 urlSchema.virtual("totalClicks").get(function () {
     return this.clickHistory.length
 })
 
+// toJSON Setting: Mongoose ko batata hai ki jab bhi yeh data API ke response (JSON) mein bheja jaye,
+// toh virtual fields (jaise totalClicks) ko chhupao mat, use bhi response mein include karo.
 urlSchema.set('toJSON', { virtuals: true })
 
 // MongoDB TTL (Time-To-Live) Index:
