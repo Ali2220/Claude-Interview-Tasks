@@ -25,7 +25,6 @@ const urlSchema = new mongoose.Schema({
         required: true
     },
 
-    // Clicks: Analytics ke liye counter, jo har click par +1 barhega
     clickHistory: [clickSchema],
 
     // Expiry Date: Woh time jab yeh link expire hona chahiye
