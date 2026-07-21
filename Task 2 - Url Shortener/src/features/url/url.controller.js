@@ -1,8 +1,10 @@
 const Url = require('./url.model')
 const { nanoid } = require('nanoid')
+const asyncHandler = require('../../utils/asyncHandler')
 
-exports.shortenUrl = async (req, res) => {
-    try {
+exports.shortenUrl = asyncHandler(
+    async (req, res) => {
+
         const { originalUrl, customAlias, expiresInDays } = req.body
 
         if (!originalUrl) {
@@ -45,13 +47,13 @@ exports.shortenUrl = async (req, res) => {
             originalUrl: url.originalUrl,
             expiresAt: url.expiresAt
         })
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-}
 
-exports.redirectUrl = async (req, res) => {
-    try {
+    }
+)
+
+exports.redirectUrl = asyncHandler(
+    async (req, res) => {
+
         const { shortCode } = req.params
 
         const url = await Url.findOne({ shortCode })
@@ -74,13 +76,13 @@ exports.redirectUrl = async (req, res) => {
         // 301 = permanent redirect (browser cache karta hai)
         // 302 = temporary redirect (analytics ke liye better)
         res.redirect(302, url.originalUrl)
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-}
 
-exports.getMyUrls = async (req, res) => {
-    try {
+    }
+)
+
+exports.getMyUrls = asyncHandler(
+    async (req, res) => {
+
         const urls = await Url.find({ owner: req.user._id })
             .sort({ createdAt: -1 })
             .select('-owner') // owner field response mein mat bhejo — unnecessary hai
@@ -95,13 +97,14 @@ exports.getMyUrls = async (req, res) => {
             count: urls.length,
             urls
         })
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-}
 
-exports.deleteUrl = async (req, res) => {
-    try {
+    }
+
+)
+
+exports.deleteUrl = asyncHandler(
+    async (req, res) => {
+
         const { shortCode } = req.params
 
         const url = await Url.findOne({ shortCode })
@@ -122,7 +125,6 @@ exports.deleteUrl = async (req, res) => {
         res.status(200).json({
             message: 'Url deleted successfully'
         })
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+
     }
-}
+)
